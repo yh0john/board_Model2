@@ -59,6 +59,7 @@ public class ControllerUsingURI extends HttpServlet{
 		}
 		CommandHandler handler = commandHandlerMap.get(command);
 		if(handler == null){
+			System.out.println(handler);
 			handler = new NullHandler();
 		}
 		String viewPage = null;

@@ -1,14 +1,19 @@
 package mvc.command;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import member.service.DuplicateIdException;
+import member.service.JoinRequest;
 import member.service.JoinService;
 
 public class JoinHandler implements CommandHandler{
 	
-	private String FORM_VIEW = "/WEB-INF/view/JoinForm.jsp";
-	private JoinService johinService = new JoinService();
+	private String FORM_VIEW = "/WEB-INF/view/joinForm.jsp";
+	private JoinService joinService = new JoinService();
 
 	@Override
 	public String process(HttpServletRequest req, HttpServletResponse res) throws Exception {
@@ -28,7 +33,29 @@ public class JoinHandler implements CommandHandler{
 	}
 	
 	private String processSubmit(HttpServletRequest req,HttpServletResponse res){
-		return null;
+		JoinRequest joinReq = new JoinRequest();
+		
+		joinReq.setId(req.getParameter("id"));
+		joinReq.setName(req.getParameter("name"));
+		joinReq.setPassword(req.getParameter("password"));
+		joinReq.setConfirmPassword(req.getParameter("confirmPassword"));
+		
+		Map<String,Object> errors = new HashMap<>();
+		req.setAttribute("errors",errors);
+		
+		joinReq.validate(errors);
+		
+		if(!errors.isEmpty()){
+			return FORM_VIEW;
+		}
+		
+		try{
+			joinService.join(joinReq);
+			return "/WEB-INF/view/joinSuccess.jsp";
+		}catch(DuplicateIdException e){
+			errors.put("duplicateId", Boolean.TRUE);
+			return FORM_VIEW;
+		}
 	}
 
 }
