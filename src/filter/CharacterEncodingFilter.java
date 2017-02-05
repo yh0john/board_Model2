@@ -18,7 +18,6 @@ public class CharacterEncodingFilter implements Filter{
 			throws IOException, ServletException {
 		req.setCharacterEncoding(encoding);
 		chain.doFilter(req, res);
-		System.out.println("테스트 로그입니다.ㅎ");
 	}
 	
 
