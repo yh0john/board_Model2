@@ -34,6 +34,16 @@
   	<url-pattern>/*</url-pattern>
   </filter-mapping>
   
+  <filter>
+  	<filter-name>LoginCheckFilter</filter-name>
+  	<filter-class>filter.LoginCheckFilter</filter-class>
+  </filter>
+  
+  <filter-mapping>
+  	<filter-name>LoginCheckFilter</filter-name>
+  	<url-pattern>/changePwd.do</url-pattern>
+  </filter-mapping>
+  
   <servlet>
   	<servlet-name>ControllerUsingURI</servlet-name>
   	<servlet-class>mvc.controller.ControllerUsingURI</servlet-class>

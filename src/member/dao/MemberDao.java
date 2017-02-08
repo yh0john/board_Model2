@@ -39,6 +39,7 @@ public class MemberDao {
 	
 	public void insert(Connection conn,Member mem) throws SQLException{
 		try(PreparedStatement pstmt = conn.prepareStatement("insert into member values(?,?,?,?)")){
+			//FIXME insert 문이 간헐적으로 안됨 ㅠ.ㅠ DB연결 확인 필요
 			pstmt.setString(1, mem.getMemberid());
 			pstmt.setString(2, mem.getUsername());
 			pstmt.setString(3, mem.getPassword());
@@ -47,7 +48,12 @@ public class MemberDao {
 		}
 	}
 	
-	public void update(Connection conn,String id){
-		
+	public void update(Connection conn,Member member) throws SQLException{
+		try(PreparedStatement pstmt = conn.prepareStatement("update member set name = ?,password = ? where memberid = ?")){
+			//FIXME Update 문이 간헐적으로 안됨 ㅠ.ㅠ  DB연결 확인 필요
+			pstmt.setString(1, member.getUsername());
+			pstmt.setString(2, member.getPassword());
+			pstmt.setString(3, member.getMemberid());
+		}
 	}
 }

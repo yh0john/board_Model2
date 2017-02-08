@@ -44,10 +44,12 @@ public class ControllerUsingURI extends HttpServlet{
 		}
 	}
 	
+	@Override
 	public void doGet(HttpServletRequest req,HttpServletResponse res) throws ServletException, IOException{
 		process(req,res);
 	}
 	
+	@Override
 	public void doPost(HttpServletRequest req,HttpServletResponse res) throws ServletException, IOException{
 		process(req,res);
 	}
@@ -57,9 +59,9 @@ public class ControllerUsingURI extends HttpServlet{
 		if(command.indexOf(req.getContextPath())==0){
 			command = command.substring(req.getContextPath().length());
 		}
+		//FIXME 로그인 시 handler null 값 check
 		CommandHandler handler = commandHandlerMap.get(command);
 		if(handler == null){
-			System.out.println(handler);
 			handler = new NullHandler();
 		}
 		String viewPage = null;
