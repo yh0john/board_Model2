@@ -65,7 +65,7 @@ public class LoginHandler implements CommandHandler{
 			//user 객체 session 저장
 			User user =loginService.login(id,password);
 			req.getSession().setAttribute("auth", user);
-			res.sendRedirect(req.getContextPath()+"index.jsp");
+			res.sendRedirect(req.getContextPath()+"/index.jsp");
 			return null;
 		}catch(LoginFailException e){
 			errors.put("idOrPwNotMatch", Boolean.TRUE);
