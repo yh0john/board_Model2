@@ -42,6 +42,7 @@
   <filter-mapping>
   	<filter-name>LoginCheckFilter</filter-name>
   	<url-pattern>/changePwd.do</url-pattern>
+  	<url-pattern>/article/write.do</url-pattern>
   </filter-mapping>
   
   <servlet>
