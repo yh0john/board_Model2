@@ -37,7 +37,7 @@ public class WriteRequest {
 	
 	//제목이 null 일 경우, validation check 에서 검사
 	public void validate(Map<String,Boolean>errors){
-		if(title==null||title.trim().isEmpty()){
+		if(title == null||title.trim().isEmpty()){
 			errors.put("title",Boolean.TRUE);
 			
 		}
