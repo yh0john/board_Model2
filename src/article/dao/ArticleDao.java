@@ -74,6 +74,14 @@ public class ArticleDao {
 		}
 	}
 	
+	public int update(Connection conn,int no,String title) throws SQLException{
+		try(PreparedStatement pstmt = conn.prepareStatement("update article set title = ?,moddate = now() where article_no = ?")){
+			pstmt.setString(1, title);
+			pstmt.setInt(2, no);
+			return pstmt.executeUpdate();
+		}
+	}
+	
 	public Article selectById(Connection conn,int no) throws SQLException{
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
