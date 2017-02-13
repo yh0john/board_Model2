@@ -82,6 +82,13 @@ public class ArticleDao {
 		}
 	}
 	
+	public int delete(Connection conn,int no) throws SQLException{
+		try(PreparedStatement pstmt = conn.prepareStatement("delete article where article_no = ?")){
+			pstmt.setInt(1, no);
+			return pstmt.executeUpdate();
+		}
+	}
+	
 	public Article selectById(Connection conn,int no) throws SQLException{
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
