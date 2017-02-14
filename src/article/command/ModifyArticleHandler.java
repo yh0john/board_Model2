@@ -1,19 +1,88 @@
 package article.command;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import article.service.ArticleData;
+import article.service.ArticleNotFoundException;
+import article.service.ModifyArticleService;
+import article.service.ModifyRequest;
+import article.service.PermissionDeniedException;
+import article.service.ReadArticleService;
+import auth.service.User;
 import mvc.command.CommandHandler;
 
 public class ModifyArticleHandler implements CommandHandler {
 
+	private static final String FORM_VIEW = "/WEB-INF/view/modifyForm.jsp";
+	
+	private ReadArticleService readService = new ReadArticleService();
+	private ModifyArticleService modifyService = new ModifyArticleService();
+	
+	
 	@Override
 	public String process(HttpServletRequest req, HttpServletResponse res) throws Exception {
-		/*TODO ModifyHandler 구현은 아래와 같다.(조금 복잡함)
-		 * GET 방식 - 수정할 게시글 데이터를 읽어와 폼에 보여준다.
-		 * POST 방식 - 전송한 요청 파라미터를 이용해서 게시글을 수정한다. 파라미터 값이 잘못 된 경우 전송한 데이터를 이용해서 폼을 다시 보여준다.
-		*/
-		return null;
+		if(req.getMethod().equalsIgnoreCase("GET")){
+			return processForm(req,res);
+		}else if(req.getMethod().equalsIgnoreCase("POST")){
+			return processSubmit(req,res);
+		}else{
+			res.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+			return null;
+		}
+	}
+	
+	private String processForm(HttpServletRequest req,HttpServletResponse res) throws IOException{
+		try{
+			String noVal = req.getParameter("no");
+			int no = Integer.parseInt(noVal);
+			ArticleData articleData = readService.getArticle(no, false);
+			User authUser = (User)req.getSession().getAttribute("authUser");
+			if(!canModify(authUser,articleData)){
+				res.sendError(HttpServletResponse.SC_FORBIDDEN);
+				return null;
+			}
+			
+			ModifyRequest modReq = new ModifyRequest(authUser.getId(),no,articleData.getArticle().getTitle(),articleData.getContent().getContent());
+			
+			req.setAttribute("modReq", modReq);
+		}catch(ArticleNotFoundException e){
+			res.sendError(HttpServletResponse.SC_NOT_FOUND);
+			return null;
+		}
+	}
+	
+	private boolean canModify(User authUser,ArticleData articleData){
+		return authUser.getId().equals(articleData.getArticle().getWriter().getId());
+	}
+	
+	private String processSubmit(HttpServletRequest req,HttpServletResponse res) throws Exception{
+		User authUser = (User)req.getSession().getAttribute("authUser");
+		String noVal = req.getParameter("no");
+		int no = Integer.parseInt(noVal);
+		
+		ModifyRequest modReq = new ModifyRequest(authUser.getId(),no,req.getParameter("title"),req.getParameter("content"));
+		
+		req.setAttribute("modReq", modReq);
+		
+		Map<String,Boolean> errors = new HashMap<>();
+		req.setAttribute("errors", errors);
+		modReq.validate(errors);
+		if(!errors.isEmpty()){
+			return FORM_VIEW;
+		}
+		
+		try{
+			modifyService.modify(modReq);
+			return "/WEB-INF/view/modifySuccess.jsp";
+		}catch(PermissionDeniedException e){
+			res.sendError(HttpServletResponse.SC_FORBIDDEN);
+			return null;
+		}
 	}
 
 }
