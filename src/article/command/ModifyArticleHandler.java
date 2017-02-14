@@ -50,6 +50,7 @@ public class ModifyArticleHandler implements CommandHandler {
 			ModifyRequest modReq = new ModifyRequest(authUser.getId(),no,articleData.getArticle().getTitle(),articleData.getContent().getContent());
 			
 			req.setAttribute("modReq", modReq);
+			return FORM_VIEW;
 		}catch(ArticleNotFoundException e){
 			res.sendError(HttpServletResponse.SC_NOT_FOUND);
 			return null;
